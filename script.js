@@ -1338,3 +1338,59 @@ function cetakPDF() {
     });
     setTimeout(() => { window.print(); }, 1000);
 }
+
+// ============================================
+// FITUR AUTO-SAVE (LOCAL STORAGE)
+// ============================================
+function initAutoSave() {
+    const inputs = document.querySelectorAll('input:not([type="file"]), textarea, select');
+    
+    // 1. Muat data yang tersimpan saat aplikasi dibuka
+    inputs.forEach(el => {
+        if (el.id) {
+            const savedValue = localStorage.getItem('bautPro_' + el.id);
+            if (savedValue !== null) {
+                el.value = savedValue;
+            }
+        }
+    });
+
+    // 2. Simpan data secara otomatis setiap kali ada ketikan/perubahan
+    inputs.forEach(el => {
+        el.addEventListener('input', () => {
+            if (el.id) {
+                localStorage.setItem('bautPro_' + el.id, el.value);
+            }
+        });
+        el.addEventListener('change', () => {
+            if (el.id) {
+                localStorage.setItem('bautPro_' + el.id, el.value);
+            }
+        });
+    });
+
+    // 3. Tambahkan tombol Reset Data di Sidebar
+    const sidebarNav = document.querySelector('aside nav');
+    if (sidebarNav && !document.getElementById('btn-reset-data')) {
+        const resetBtn = document.createElement('button');
+        resetBtn.id = 'btn-reset-data';
+        resetBtn.type = 'button';
+        resetBtn.className = "w-full text-left px-4 py-3 mt-4 rounded bg-red-100 text-red-800 border border-red-300 font-bold hover:bg-red-200 transition shadow-sm";
+        resetBtn.innerHTML = "🗑️ Hapus Semua Data Auto-Save";
+        resetBtn.onclick = () => {
+            if (confirm("Yakin ingin mereset seluruh isian form? Data yang belum dicetak akan hilang.")) {
+                const keys = Object.keys(localStorage);
+                keys.forEach(key => {
+                    if (key.startsWith('bautPro_')) localStorage.removeItem(key);
+                });
+                location.reload();
+            }
+        };
+        sidebarNav.appendChild(resetBtn);
+    }
+}
+
+// Jalankan auto-save setelah seluruh DOM siap
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initAutoSave, 500);
+});
