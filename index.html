@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAUT Pro - Dokumen Proyek Lengkap</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-red-50 font-sans text-gray-800 flex h-screen overflow-hidden">
+
+    <!-- LAYAR LOGIN / SPLASH SCREEN FULL LAYAR -->
+    <div id="login-screen" class="fixed inset-0 z-[60] bg-white flex flex-col items-center justify-center print-hide transition-opacity duration-500">
+        <h1 class="text-5xl md:text-6xl font-extrabold text-red-600 mb-4 font-serif tracking-tight">BAUT Pro</h1>
+        <p class="text-red-600 text-lg md:text-xl font-medium mb-12">Sistem Manajemen Dokumen</p>
+        <button type="button" onclick="startApp()" class="w-48 md:w-64 bg-red-600 text-white font-extrabold text-base py-2.5 rounded-full shadow-lg hover:bg-red-700 hover:shadow-xl transition-all transform hover:scale-105 uppercase tracking-widest">
+            MULAI
+        </button>
+    </div>
+
+    <!-- Container Notifikasi -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 print-hide"></div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-red-200 text-red-800 flex flex-col shrink-0 z-40 shadow-xl print-hide">
+        <div class="p-6 text-center border-b border-red-100">
+            <h1 class="text-xl font-bold text-red-600">BAUT Pro</h1>
+            <p class="text-xs text-red-400 mt-1">Sistem Manajemen Dokumen</p>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <button type="button" onclick="switchTab('form-tab')" class="w-full text-left px-4 py-3 rounded bg-red-600 text-white font-medium hover:bg-red-700 transition shadow">📝 Input Data Proyek</button>
+            <button type="button" onclick="switchTab('editor-tab')" class="w-full text-left px-4 py-3 rounded bg-white text-red-600 border border-red-200 font-medium hover:bg-red-50 transition">✍️ Editor Ekstra</button>
+            <button type="button" onclick="switchTab('report-tab')" class="w-full text-left px-4 py-3 rounded bg-white text-red-600 border border-red-200 font-medium hover:bg-red-50 transition">📄 Preview Laporan</button>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 relative bg-gray-100" id="main-scroller">
+        
+        <!-- ============================================== -->
+        <!-- TAB 1: FORM INPUT                              -->
+        <!-- ============================================== -->
+        <section id="form-tab" class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-red-200 print-hide mb-12">
+            <div class="flex justify-between items-center border-b border-red-100 pb-4 mb-4">
+                <h2 class="text-2xl font-bold text-red-800">Formulir Data Dokumen</h2>
+                <button type="button" onclick="tambahHalamanCustom()" class="bg-red-600 text-white px-4 py-2 rounded shadow font-bold text-sm hover:bg-red-700 transition flex items-center gap-2">
+                    ➕ Tambah Halaman
+                </button>
+            </div>
+            
+            <div class="flex gap-1 mb-6 bg-red-50 border border-red-100 p-1.5 rounded-lg overflow-x-auto no-scrollbar print-hide" id="form-nav-container"></div>
+
+            <form id="data-form" class="space-y-6">
+                <!-- FORM HAL 1 -->
+                <div id="form-page-1" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">DATA PROYEK UTAMA (COVER)</h3>
+                    <div class="bg-red-50 p-4 rounded border border-red-200 mb-6 shadow-sm">
+                        <label class="block font-bold text-sm mb-3 text-red-800">🖼️ Upload Logo (Kiri & Kanan)</label>
+                        <p class="text-xs text-red-600 mb-3">*Jika logo hilang, silakan upload ulang di sini. Akan otomatis muncul di semua kop halaman.</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><span class="text-xs font-bold text-red-800">Logo Kiri (Telkom)</span><input type="file" id="inp-logo-kiri" accept="image/*" class="w-full mt-1 border border-red-200 bg-white p-1 rounded text-xs cursor-pointer"></div>
+                            <div><span class="text-xs font-bold text-red-800">Logo Kanan (Infra)</span><input type="file" id="inp-logo-kanan" accept="image/*" class="w-full mt-1 border border-red-200 bg-white p-1 rounded text-xs cursor-pointer"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 items-center mb-3"><label class="font-medium text-sm">PROYEK</label><input type="text" id="inp-proyek" oninput="updateReport()" class="col-span-2 border rounded p-2 focus:ring-2 focus:ring-red-500 outline-none uppercase" value="SP#21 Pengadaan dan Pemasangan OSP FTTH PT3 FBB Batch-3 Area 3"></div>
+                    <div class="grid grid-cols-3 gap-4 items-center mb-3"><label class="font-medium text-sm">KONTRAK</label><input type="text" id="inp-kontrak" oninput="updateReport()" class="col-span-2 border rounded p-2 focus:ring-2 focus:ring-red-500 outline-none uppercase" value="K.TEL.034/HK.810/JIFC-000000/2024, Tanggal 19 Desember 2024"></div>
+                    <div class="grid grid-cols-3 gap-4 items-center mb-3"><label class="font-medium text-sm">SURAT PESANAN</label><input type="text" id="inp-sp" oninput="updateReport()" class="col-span-2 border rounded p-2 focus:ring-2 focus:ring-red-500 outline-none uppercase" value="K.TEL.096/HK.810/JIFC-000000/2026, Tanggal 29 April 2026"></div>
+                    <div class="grid grid-cols-3 gap-4 items-center mb-3"><label class="font-medium text-sm">DISTRICT</label><input type="text" id="inp-district" oninput="updateReport()" class="col-span-2 border rounded p-2 focus:ring-2 focus:ring-red-500 outline-none uppercase" value="MATARAM"></div>
+                    <div class="grid grid-cols-3 gap-4 items-center mb-3"><label class="font-medium text-sm">LOKASI</label><input type="text" id="inp-lokasi" oninput="updateReport()" class="col-span-2 border rounded p-2 focus:ring-2 focus:ring-red-500 outline-none uppercase" value="DOMPU [3NTB-DMP-PT3-1658640-RAFIAH]"></div>
+                    <div class="grid grid-cols-3 gap-4 items-center mb-3"><label class="font-medium text-sm">PELAKSANA</label><input type="text" id="inp-pelaksana" oninput="updateReport()" class="col-span-2 border rounded p-2 focus:ring-2 focus:ring-red-500 outline-none uppercase" value="PT. TELKOM AKSES"></div>
+                    <div class="mt-8 flex justify-end"><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- FORM HAL 2 -->
+                <div id="form-page-2" class="hidden form-page-content relative">
+                    <div class="flex justify-between items-center mb-4 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">
+                        <h3 class="font-semibold text-red-800 flex-1">DAFTAR ISI & LAMPIRAN</h3>
+                        <div class="flex gap-2 relative z-10"><button type="button" onclick="tambahDaftarIsi()" class="bg-red-600 text-white px-3 py-1.5 rounded text-[10px] sm:text-xs font-bold hover:bg-red-700 shadow">+ Tambah Item</button></div>
+                    </div>
+                    <div id="container-daftar-isi" class="space-y-3">
+                        <div class="flex gap-2 items-center"><input type="text" oninput="updateReport()" class="flex-1 border rounded p-2 focus:ring-2 outline-none uppercase" value="BERITA ACARA UJI TERIMA"><button type="button" onclick="hapusDaftarIsi(this)" class="bg-white border text-red-600 px-3 py-2 rounded font-bold">X</button></div>
+                        <div class="flex gap-2 items-center"><input type="text" oninput="updateReport()" class="flex-1 border rounded p-2 focus:ring-2 outline-none uppercase" value="LAMPIRAN BERITA ACARA AS BUILD DRAWING"><button type="button" onclick="hapusDaftarIsi(this)" class="bg-white border text-red-600 px-3 py-2 rounded font-bold">X</button></div>
+                        <div class="flex gap-2 items-center"><input type="text" oninput="updateReport()" class="flex-1 border rounded p-2 focus:ring-2 outline-none uppercase" value="LAMPIRAN BILL OF QUANTITY UJI TERIMA"><button type="button" onclick="hapusDaftarIsi(this)" class="bg-white border text-red-600 px-3 py-2 rounded font-bold">X</button></div>
+                        <div class="flex gap-2 items-center"><input type="text" oninput="updateReport()" class="flex-1 border rounded p-2 focus:ring-2 outline-none uppercase" value="LAMPIRAN EVIDEN UJI TERIMA"><button type="button" onclick="hapusDaftarIsi(this)" class="bg-white border text-red-600 px-3 py-2 rounded font-bold">X</button></div>
+                        <div class="flex gap-2 items-center"><input type="text" oninput="updateReport()" class="flex-1 border rounded p-2 focus:ring-2 outline-none uppercase" value="LAMPIRAN HASIL UKUR FORM OPM DAN OTDR"><button type="button" onclick="hapusDaftarIsi(this)" class="bg-white border text-red-600 px-3 py-2 rounded font-bold">X</button></div>
+                        <div class="flex gap-2 items-center"><input type="text" oninput="updateReport()" class="flex-1 border rounded p-2 focus:ring-2 outline-none uppercase" value="LAMPIRAN KML"><button type="button" onclick="hapusDaftarIsi(this)" class="bg-white border text-red-600 px-3 py-2 rounded font-bold">X</button></div>
+                        <div class="flex gap-2 items-center"><input type="text" oninput="updateReport()" class="flex-1 border rounded p-2 focus:ring-2 outline-none uppercase" value="LAMPIRAN MANCORE"><button type="button" onclick="hapusDaftarIsi(this)" class="bg-white border text-red-600 px-3 py-2 rounded font-bold">X</button></div>
+                    </div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- FORM HAL 3 -->
+                <div id="form-page-3" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">TANGGAL, PERSONIL & BAK TKP</h3>
+                    <div class="grid grid-cols-3 gap-4 items-center mb-4 pb-4 border-b border-red-100">
+                        <label class="font-medium text-sm">TANGGAL LAPORAN</label>
+                        <input type="date" id="inp-tanggal" onchange="generateTerbilang()" class="col-span-2 border rounded p-2 focus:ring-2 outline-none cursor-pointer">
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 p-4 bg-red-50 rounded border border-red-100">
+                        <div><label class="block text-xs text-red-500 mb-1">Hari</label><input type="text" id="inp-hari" oninput="updateReport()" value="RABU" class="w-full border rounded p-2 text-xs uppercase"></div>
+                        <div><label class="block text-xs text-red-500 mb-1">Tanggal</label><input type="text" id="inp-tgl-teks" oninput="updateReport()" value="TIGA" class="w-full border rounded p-2 text-xs uppercase"></div>
+                        <div><label class="block text-xs text-red-500 mb-1">Bulan</label><input type="text" id="inp-bln-teks" oninput="updateReport()" value="JUNI" class="w-full border rounded p-2 text-xs uppercase"></div>
+                        <div><label class="block text-xs text-red-500 mb-1">Tahun</label><input type="text" id="inp-thn-teks" oninput="updateReport()" value="DUA RIBU DUA PULUH ENAM" class="w-full border rounded p-2 text-xs uppercase"></div>
+                        <div class="col-span-2 sm:col-span-4 mt-2"><label class="block text-xs text-red-500 mb-1">Tempat Penandatanganan</label><input type="text" id="inp-tempat-ttd" oninput="updateReport()" value="MATARAM" class="w-full border rounded p-2 text-sm uppercase"></div>
+                    </div>
+
+                    <!-- TTD GLOBAL (BISA DIEDIT SEMUA) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start mb-6 border-t border-red-100 pt-4">
+                        <div class="space-y-3 p-4 bg-white shadow-sm border border-red-200 rounded-lg">
+                            <h4 class="font-bold text-sm text-red-800 border-b border-red-200 pb-2">PIHAK PERTAMA (KIRI)</h4>
+                            <div><label class="block text-xs font-bold mb-1">Nama Perusahaan</label><input type="text" id="inp-pihak1-perusahaan" oninput="updateReport()" value="PT. TELKOM INFRASTRUKTUR INDONESIA, Tbk." class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                            <div><label class="block text-xs font-bold mb-1">Jabatan TTD</label><input type="text" id="inp-pihak1-jabatan" oninput="updateReport()" value="TIM UJI TERIMA" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                            <div><label class="block text-xs font-bold mb-1">Nama Lengkap</label><input type="text" id="inp-pihak1-nama" oninput="updateReport()" value="DIDIK TRIPRASETYO UTOMO" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                            <div><label class="block text-xs font-bold mb-1">NIK</label><input type="text" id="inp-pihak1-nik" oninput="updateReport()" value="720026" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                        </div>
+                        <div class="space-y-3 p-4 bg-white shadow-sm border border-red-200 rounded-lg">
+                            <h4 class="font-bold text-sm text-red-800 border-b border-red-200 pb-2">PIHAK KEDUA (KANAN)</h4>
+                            <div><label class="block text-xs font-bold mb-1">Nama Perusahaan</label><input type="text" id="inp-pihak2-perusahaan" oninput="updateReport()" value="PT. TELKOM AKSES" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                            <div><label class="block text-xs font-bold mb-1">Jabatan TTD</label><input type="text" id="inp-pihak2-jabatan" oninput="updateReport()" value="TIM UJI TERIMA" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                            <div><label class="block text-xs font-bold mb-1">Nama Lengkap</label><input type="text" id="inp-pihak2-nama" oninput="updateReport()" value="RIAN HAVIZTA MANDARA" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                            <div><label class="block text-xs font-bold mb-1">NIK</label><input type="text" id="inp-pihak2-nik" oninput="updateReport()" value="92250026" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-100 p-4 rounded border border-red-300 mt-6 shadow-sm">
+                        <label class="block font-bold text-sm mb-3 text-red-800">✍️ Upload Tanda Tangan (TTD) Global</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><span class="text-xs font-bold">Gambar TTD Pihak 1</span><input type="file" id="inp-ttd-tif" accept="image/*" class="w-full mt-1 border bg-white p-1 rounded text-xs cursor-pointer"></div>
+                            <div><span class="text-xs font-bold">Gambar TTD Pihak 2</span><input type="file" id="inp-ttd-ta" accept="image/*" class="w-full mt-1 border bg-white p-1 rounded text-xs cursor-pointer"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50 p-4 rounded border border-red-100 mt-6 mb-6">
+                        <label class="block font-bold text-sm mb-2 text-red-900">Paragraf Pembuka BAK TKP</label>
+                        <div class="space-y-3">
+                            <textarea id="inp-tkp-p1" oninput="window.isTkpEdited=true; updateReport()" rows="4" class="w-full border bg-white p-2 rounded text-sm focus:ring-2 outline-none text-justify"></textarea>
+                            <textarea id="inp-tkp-p2" oninput="window.isTkpEdited=true; updateReport()" rows="2" class="w-full border bg-white p-2 rounded text-sm focus:ring-2 outline-none text-justify"></textarea>
+                        </div>
+                        <button type="button" onclick="resetTkpText()" class="mt-2 text-xs bg-white text-red-600 border border-red-500 font-bold px-3 py-1.5 rounded hover:bg-red-50">🔄 Reset Teks TKP Otomatis</button>
+                    </div>
+
+                    <h3 class="font-semibold text-red-700 mb-3 mt-6 bg-red-100 border-l-4 border-red-600 p-2 rounded-r">UPLOAD GAMBAR TABEL (BAK TKP)</h3>
+                    <div class="space-y-4 bg-red-50 p-4 rounded border border-red-100">
+                        <div><label class="block font-bold text-sm mb-1">1. Tabel A (Rekapitulasi Nilai Pekerjaan)</label><input type="file" id="inp-img-tkp-rekap" accept="image/*" class="w-full border bg-white p-2 rounded text-sm cursor-pointer"></div>
+                        <div><label class="block font-bold text-sm mb-1">2. Tabel B (Volume Material Pekerjaan)</label><input type="file" id="inp-img-tkp-material" accept="image/*" class="w-full border bg-white p-2 rounded text-sm cursor-pointer"></div>
+                    </div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- FORM HAL 4 -->
+                <div id="form-page-4" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">DATA UJI TERIMA PERTAMA (UT-1)</h3>
+                    <div class="space-y-4">
+                        <div><label class="block font-bold text-sm mb-1">Paragraf 1</label><textarea id="inp-ut1-p1" oninput="window.isUt1Edited=true; updateReport()" rows="4" class="w-full border bg-white p-2 rounded text-sm outline-none text-justify"></textarea></div>
+                        <button type="button" onclick="resetUt1Text()" class="mt-2 text-xs bg-white text-red-600 border border-red-500 font-bold px-3 py-1.5 rounded hover:bg-red-50">🔄 Reset Teks UT-1 Otomatis</button>
+                    </div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- FORM HAL 5 -->
+                <div id="form-page-5" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">DATA BOQ UJI TERIMA</h3>
+                    <div class="bg-red-50 p-4 rounded border border-red-100"><label class="block font-bold text-sm mb-2">Upload Gambar Tabel BOQ</label><input type="file" id="inp-img-boq" accept="image/*" class="w-full border bg-white p-2 rounded text-sm cursor-pointer"></div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- FORM HAL 6 -->
+                <div id="form-page-6" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">PENGATURAN EVIDEN & PARAF</h3>
+                    <p class="text-xs text-red-600 mb-4 bg-red-50 p-3 border border-red-200 rounded">*Halaman ini khusus untuk mengatur Paraf Global & Eviden 1. Halaman ini TIDAK AKAN MUNCUL di mode Preview/Cetak PDF.</p>
+                    <div class="bg-red-100 p-4 rounded border border-red-300 mb-6 shadow-sm">
+                        <label class="block font-bold text-sm mb-3">✍️ Upload Paraf TIF & TA (Cukup Sekali di Sini)</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><span class="text-xs font-bold">Gambar Paraf TIF</span><input type="file" id="inp-paraf-tif" accept="image/*" class="w-full mt-1 border bg-white p-1 rounded text-xs cursor-pointer"></div>
+                            <div><span class="text-xs font-bold">Gambar Paraf TA</span><input type="file" id="inp-paraf-ta" accept="image/*" class="w-full mt-1 border bg-white p-1 rounded text-xs cursor-pointer"></div>
+                        </div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded border border-red-100 mb-6">
+                        <h4 class="font-bold text-sm mb-3">Upload Foto Eviden 1 (Maks 9 Foto)</h4>
+                        <div class="border-2 border-dashed border-red-300 p-6 rounded-lg text-center bg-white mb-4 relative overflow-hidden group hover:border-red-500 hover:bg-red-50 cursor-pointer" id="drop-ev1" onclick="document.getElementById('hidden-file-input-global').click(); window.currentUploaderId = 'ev1';">
+                            <div class="pointer-events-none"><span class="text-4xl block mb-2">📸</span><p class="text-red-700 text-sm font-bold">Tarik & Lepas foto ke sini</p></div>
+                            <input type="file" id="file-ev1" multiple accept="image/*" class="hidden">
+                        </div>
+                        <div id="grid-ev1" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                    </div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- Template Halaman 7 - 26 dan Custom Digenerate Melalui JS -->
+                <div id="dynamic-form-pages-container"></div>
+
+                <!-- FORM HAL 27 (ABD) -->
+                <div id="form-page-27" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">BERITA ACARA AS BUILD DRAWING (ABD)</h3>
+                    <div class="bg-red-50 p-4 rounded border border-red-100 mb-6">
+                        <label class="block font-bold text-sm mb-2">Paragraf Pembuka ABD</label>
+                        <textarea id="inp-abd-paragraf" oninput="window.isAbdEdited=true; updateReport()" rows="6" class="w-full border bg-white p-2 rounded text-sm outline-none text-justify"></textarea>
+                        <button type="button" onclick="resetAbdText()" class="mt-2 text-xs bg-white text-red-600 border border-red-500 font-bold px-3 py-1.5 rounded hover:bg-red-50">🔄 Reset Teks Otomatis</button>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded border border-red-100 mb-6">
+                        <label class="block font-bold text-sm mb-2">Upload Gambar Tabel ABD</label>
+                        <input type="file" id="inp-img-abd-table" accept="image/*" class="w-full border bg-white p-2 rounded text-sm cursor-pointer">
+                    </div>
+                    <div class="bg-red-100 p-4 rounded border border-red-300 mb-6 shadow-sm">
+                        <label class="block font-bold text-sm mb-3">✍️ Data Penandatangan Khusus Kiri (ABD)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-3 p-3 bg-white border border-red-200 rounded">
+                                <h4 class="font-bold text-xs border-b pb-1">KIRI (BEBAS EDIT)</h4>
+                                <div><label class="block text-xs font-bold mb-1">Jabatan</label><input type="text" id="inp-abd-kiri-jabatan" oninput="updateReport()" value="MGR PROJECT DEPLOYMENT" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                                <div><label class="block text-xs font-bold mb-1">Nama Lengkap</label><input type="text" id="inp-abd-kiri-nama" oninput="updateReport()" value="AMRAN QURAISY" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                                <div><label class="block text-xs font-bold mb-1">NIK</label><input type="text" id="inp-abd-kiri-nik" oninput="updateReport()" value="800023" class="w-full border rounded p-1.5 uppercase text-sm"></div>
+                                <div><label class="block text-xs font-bold mb-1">Upload TTD Khusus</label><input type="file" id="inp-ttd-abd-kiri" accept="image/*" class="w-full border bg-red-50 p-1 rounded text-xs cursor-pointer"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- FORM HAL 28 (KML) -->
+                <div id="form-page-28" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">LAMPIRAN KML (HAL 28)</h3>
+                    <div class="bg-red-50 p-4 rounded border border-red-100 mb-6">
+                        <h4 class="font-bold text-sm mb-2">Upload Gambar Peta KML</h4>
+                        <input type="file" id="inp-img-kml" accept="image/*" class="w-full border bg-white p-2 rounded text-sm cursor-pointer">
+                    </div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" class="btn-nav-next bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700 shadow hidden">Next ➡️</button></div>
+                </div>
+
+                <!-- FORM HAL 29 (MANCORE) -->
+                <div id="form-page-29" class="hidden form-page-content relative">
+                    <h3 class="font-semibold text-red-700 mb-3 bg-red-100 border-l-4 border-red-600 p-2 rounded-r relative overflow-hidden pr-32 page-header">LAMPIRAN MANCORE (HAL 29)</h3>
+                    <div class="bg-red-50 p-4 rounded border border-red-100 mb-6">
+                        <h4 class="font-bold text-sm mb-2">Upload Gambar Tabel Mancore</h4>
+                        <input type="file" id="inp-img-mancore" accept="image/*" class="w-full border bg-white p-2 rounded text-sm cursor-pointer">
+                    </div>
+                    <div class="mt-8 flex justify-between"><button type="button" class="btn-nav-prev bg-white border border-red-500 text-red-600 px-6 py-2 rounded font-medium hover:bg-red-50 hidden">⬅️ Prev</button><button type="button" onclick="cetakPDF()" class="btn-nav-next bg-green-600 text-white px-6 py-2 rounded font-medium hover:bg-green-700 shadow-md">Lihat Preview & Cetak 📄</button></div>
+                </div>
+            </form>
+        </section>
+
+        <!-- TAB EDITOR EKSTRA -->
+        <section id="editor-tab" class="hidden max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-red-200 print-hide mb-12">
+            <div class="flex justify-between items-end border-b border-red-100 pb-4 mb-6">
+                <div><h2 class="text-2xl font-bold text-red-800">Studio Editor Ekstra</h2></div>
+                <button class="bg-red-600 text-white px-6 py-2 rounded shadow hover:bg-red-700 font-bold flex items-center gap-2">Simpan Laporan</button>
+            </div>
+            <div id="lembar-kerja" contenteditable="true" class="rich-editor w-full min-h-[400px] p-10 border-2 border-red-200 rounded-lg outline-none focus:border-red-500 bg-red-50 shadow-inner text-red-900">
+                <p class="text-red-400 text-center italic mt-20">Lembar kerja tambahan kosong...</p>
+            </div>
+        </section>
+
+        <!-- TAB PREVIEW -->
+        <section id="report-tab" class="hidden w-full pb-20">
+            <!-- STICKY HEADER PREVIEW -->
+            <div id="preview-header-wrapper" class="sticky top-0 z-[50] w-full bg-gray-100 pt-4 pb-2 print-hide shadow-sm mb-4">
+                <div id="preview-header" class="w-full max-w-[210mm] mx-auto flex justify-between items-center bg-white p-3 rounded-lg shadow border border-red-200">
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar" id="preview-nav-container"></div>
+                    <button onclick="cetakPDF()" class="bg-green-600 text-white px-5 py-2 rounded shadow hover:bg-green-700 font-bold text-sm shrink-0 ml-2">🖨️ Cetak PDF</button>
+                </div>
+            </div>
+            
+            <div id="print-area" class="w-full flex flex-col items-center">
+                <!-- PREVIEW HALAMAN 1 SD 29 & CUSTOM -->
+                <div id="dynamic-preview-container" class="w-full max-w-none flex flex-col gap-6 items-center"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================== -->
+    <!-- MODAL POP-UP TAMBAH HALAMAN CUSTOM             -->
+    <!-- ============================================== -->
+    <div id="custom-prompt-modal" class="fixed inset-0 z-[100] bg-black bg-opacity-60 hidden flex items-center justify-center transition-opacity print-hide">
+        <div class="bg-white rounded-lg shadow-2xl w-11/12 max-w-md overflow-hidden border border-red-200 transform transition-all">
+            <!-- Header Modal -->
+            <div class="bg-red-600 px-4 py-3 flex justify-between items-center">
+                <h3 class="text-white font-bold text-lg">➕ Tambah Halaman</h3>
+                <button type="button" onclick="closePromptModal()" class="text-red-100 hover:text-white transition font-bold text-xl">&times;</button>
+            </div>
+            
+            <!-- Body Modal -->
+            <div class="p-6">
+                <p class="text-sm text-gray-700 font-medium mb-3">Pilih Aksi:</p>
+                <ol class="list-decimal ml-4 text-sm text-gray-600 mb-4 space-y-1">
+                    <li>Ketik <strong>NOMOR HALAMAN (1 - <span id="modal-max-page">29</span>)</strong> yang ingin DIDUPLIKAT.</li>
+                    <li>Atau ketik <strong class="text-red-600">"baru"</strong> untuk membuat halaman kosong baru di akhir laporan.</li>
+                </ol>
+                
+                <input type="text" id="custom-prompt-input" onkeydown="if(event.key === 'Enter') submitPromptModal()" 
+                    class="w-full border border-red-300 rounded p-3 focus:ring-2 focus:ring-red-500 outline-none text-red-900 font-medium uppercase shadow-inner" 
+                    placeholder="Contoh: 15 atau BARU" autocomplete="off">
+            </div>
+            
+            <!-- Footer Modal -->
+            <div class="bg-gray-50 px-4 py-3 border-t border-gray-200 flex justify-end gap-3">
+                <button type="button" onclick="closePromptModal()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded font-medium hover:bg-gray-100 transition shadow-sm">
+                    Batal
+                </button>
+                <button type="button" onclick="submitPromptModal()" class="px-6 py-2 bg-red-600 text-white rounded font-bold hover:bg-red-700 transition shadow-md">
+                    Oke
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Script JS file -->
+    <script src="js/script.js?v=clear-cache-123"></script>
+</body>
+</html>

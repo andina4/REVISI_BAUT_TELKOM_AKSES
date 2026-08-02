@@ -1,0 +1,98 @@
+/* Sembunyikan scrollbar tanpa menghilangkan fungsi scrollnya */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Tampilan Layar Normal */
+@media screen {
+    .paper-a4 {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto 20px auto;
+        background: white;
+        padding: 15mm;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #fbcfe8;
+    }
+    
+    .paper-a4-landscape {
+        width: 297mm;
+        min-height: 210mm;
+        margin: 0 auto 20px auto;
+        background: white;
+        padding: 15mm;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #fbcfe8;
+    }
+}
+
+/* Konfigurasi Ukuran Mesin Printer (Memaksa Browser Auto-Orientation) */
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+@page landscape_page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+@media print {
+    /* MEMATIKAN overflow-hidden & h-screen Bawaan Tailwind */
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background-color: white !important;
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    main, section, #report-tab, #print-area, #dynamic-preview-container {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+        position: static !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        clear: both !important;
+    }
+
+    /* Menyembunyikan elemen UI Aplikasi saat dicetak */
+    .print-hide, aside, #form-tab, #editor-tab, #preview-header, #toast-container, #login-screen, #custom-prompt-modal {
+        display: none !important;
+    }
+
+    /* Kertas Portrait (Otomatis dibaca Portrait oleh Browser) */
+    .paper-a4 {
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 15mm !important;
+        box-shadow: none !important;
+        border: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Kertas Landscape (Otomatis dibaca Landscape oleh Browser) */
+    .paper-a4-landscape {
+        page: landscape_page !important;
+        width: 297mm !important;
+        height: 210mm !important;
+        margin: 0 !important;
+        padding: 15mm !important;
+        box-shadow: none !important;
+        border: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+}
