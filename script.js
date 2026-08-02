@@ -42,8 +42,9 @@ if (!document.getElementById('print-fix-style-v15')) {
 // ============================================
 // PENGATURAN LOGO & VARIABEL GLOBAL
 // ============================================
-const URL_LOGO_KIRI = 'assets/image/telkom.jpg'; 
-const URL_LOGO_KANAN = 'assets/image/infra.jpg'; 
+// Path Logo sudah disesuaikan untuk struktur flat GitHub
+const URL_LOGO_KIRI = 'telkom.jpg'; 
+const URL_LOGO_KANAN = 'infra.jpg'; 
 
 function setGlobalLogos() {
     const fallbackLogo = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"%3E%3Crect width="200" height="80" fill="%23fdf2f8"/%3E%3Ctext x="50%25" y="50%25" font-family="sans-serif" font-size="14" fill="%23db2777" text-anchor="middle" dy=".3em"%3ELOGO%3C/text%3E%3C/svg%3E';
