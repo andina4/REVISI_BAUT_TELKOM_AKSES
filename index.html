@@ -245,7 +245,10 @@
         <section id="editor-tab" class="hidden max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-red-200 print-hide mb-12">
             <div class="flex justify-between items-end border-b border-red-100 pb-4 mb-6">
                 <div><h2 class="text-2xl font-bold text-red-800">Studio Editor Ekstra</h2></div>
-                <button class="bg-red-600 text-white px-6 py-2 rounded shadow hover:bg-red-700 font-bold flex items-center gap-2">Simpan Laporan</button>
+                <!-- TOMBOL SIMPAN LAPORAN YANG SUDAH DIAKTIFKAN -->
+                <button type="button" onclick="simpanEditorEkstra()" class="bg-red-600 text-white px-6 py-2 rounded shadow hover:bg-red-700 font-bold flex items-center gap-2 transition-all active:scale-95">
+                    💾 Simpan Laporan
+                </button>
             </div>
             <div id="lembar-kerja" contenteditable="true" class="rich-editor w-full min-h-[400px] p-10 border-2 border-red-200 rounded-lg outline-none focus:border-red-500 bg-red-50 shadow-inner text-red-900">
                 <p class="text-red-400 text-center italic mt-20">Lembar kerja tambahan kosong...</p>
@@ -306,6 +309,6 @@
     </div>
 
     <!-- Path JS sudah disesuaikan untuk struktur flat GitHub -->
-    <script src="script.js?v=clear-cache-123"></script>
+    <script src="script.js?v=clear-cache-124"></script>
 </body>
 </html>
