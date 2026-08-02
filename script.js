@@ -1280,6 +1280,17 @@ class PhotoUploader {
     }
 }
 
+// ============================================
+// LOGIKA EDITOR EKSTRA
+// ============================================
+function simpanEditorEkstra() {
+    const editor = document.getElementById('lembar-kerja');
+    if (editor) {
+        localStorage.setItem('bautPro_editor_ekstra', editor.innerHTML);
+        showCustomToast("Mantap! Laporan Ekstra berhasil disimpan ke draf lokal.", false);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     generateDynamicPreviewPages();
     injectFormActions(); 
@@ -1326,6 +1337,15 @@ document.addEventListener('DOMContentLoaded', () => {
         window[`${p.uploaderId}Uploader`] = new PhotoUploader(p.uploaderId, p.max, p.capId, defaults);
         defaults.forEach((cap, idx) => { const outCap = document.getElementById(`${p.capId}-cap-${idx+1}`); if(outCap) outCap.innerText = cap; });
     });
+
+    // Jalankan pemuatan draf Editor Ekstra
+    setTimeout(() => {
+        const savedEditor = localStorage.getItem('bautPro_editor_ekstra');
+        const editor = document.getElementById('lembar-kerja');
+        if (savedEditor && editor) {
+            editor.innerHTML = savedEditor;
+        }
+    }, 600);
 });
 
 function cetakPDF() {
