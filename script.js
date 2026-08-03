@@ -902,6 +902,7 @@ function buatHalamanBlank() {
     </div>`);
 
     const prevContainer = document.getElementById('dynamic-preview-container');
+    // FIX: Custom page paraf wrapper diganti kelas tailwind-nya, paraf Rian dihilangkan
     prevContainer.insertAdjacentHTML('beforeend', `
     <div id="preview-page-${pageId}" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
         <div class="relative w-full h-8 lg:h-10 mb-2 shrink-0"><img src="" class="h-6 lg:h-8 absolute left-0 top-0 object-contain out-logo-kiri"><img src="" class="h-6 lg:h-8 absolute right-0 top-0 object-contain out-logo-kanan"></div><div class="text-center w-full mb-2 shrink-0"><h1 class="text-[13px] md:text-sm font-bold leading-tight uppercase" id="out-custom-${pageId}-judul">BERITA ACARA CUSTOM</h1></div><div class="border-t-2 border-black mb-[2px] shrink-0"></div><div class="border-t border-black mb-2 shrink-0"></div>
