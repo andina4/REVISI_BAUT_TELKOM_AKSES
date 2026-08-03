@@ -42,9 +42,9 @@ if (!document.getElementById('print-fix-style-v15')) {
 // ============================================
 // PENGATURAN LOGO & VARIABEL GLOBAL
 // ============================================
-// Path Logo sudah disesuaikan untuk struktur flat GitHub
-const URL_LOGO_KIRI = 'telkom.jpg'; 
-const URL_LOGO_KANAN = 'infra.jpg'; 
+// FIX: Membalik default logo (Infra di Kiri, Telkom Akses di Kanan)
+const URL_LOGO_KIRI = 'infra.jpg'; 
+const URL_LOGO_KANAN = 'telkom.jpg'; 
 
 function setGlobalLogos() {
     const fallbackLogo = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"%3E%3Crect width="200" height="80" fill="%23fdf2f8"/%3E%3Ctext x="50%25" y="50%25" font-family="sans-serif" font-size="14" fill="%23db2777" text-anchor="middle" dy=".3em"%3ELOGO%3C/text%3E%3C/svg%3E';
@@ -284,12 +284,12 @@ function updateBottomNav(id) {
 // ============================================
 // TEMPLATE HTML UNTUK PREVIEW
 // ============================================
-// FIX: Membalik out-logo-kiri dan out-logo-kanan agar Telkom Akses di kanan dan TIF di kiri
+// FIX: Logo Kiri selalu di kiri, Kanan selalu di kanan (Kiri = Infra, Kanan = Telkom)
 function tplHeader(title) {
     return `
     <div class="relative w-full h-8 mb-2 shrink-0">
-        <img src="" class="h-6 lg:h-8 absolute left-0 top-[-8px] object-contain out-logo-kanan">
-        <img src="" class="h-6 lg:h-8 absolute right-0 top-[-8px] object-contain out-logo-kiri">
+        <img src="" class="h-6 lg:h-8 absolute left-0 top-[-8px] object-contain out-logo-kiri">
+        <img src="" class="h-6 lg:h-8 absolute right-0 top-[-8px] object-contain out-logo-kanan">
     </div>
     <div class="text-center w-full mb-2 shrink-0">
         <h1 class="text-[13px] md:text-sm font-bold leading-tight uppercase">${title}</h1>
@@ -311,7 +311,6 @@ function tplInfo() {
     <div class="border-t-2 border-black mb-4"></div>`;
 }
 
-// FIX: Menghapus paraf kecil di bagian kanan (Pihak 2 / Rian)
 function tplTTD(marginClass = "mt-12") {
     return `
     <div class="w-full ${marginClass} flex justify-between px-8 text-center font-bold text-[11px] pb-4 shrink-0">
@@ -474,13 +473,12 @@ function generateDynamicPreviewPages() {
     }
 
     // PENTING: HALAMAN 1 SD 6 DIINJEK KE AWAL PREVIEW CONTAINER MENGGUNAKAN INSERTADJACENTHTML
-// FIX: Logo Kiri dan Kanan di cover juga dibalik posisinya sesuai request sebelumnya
     prevContainer.insertAdjacentHTML('afterbegin', `
         <div id="preview-page-1" class="paper-a4 text-[13px] font-sans relative preview-page-kertas">
             <div class="w-full">
                 <div class="relative flex justify-between items-start mb-6">
-                    <img src="" alt="Logo Kiri" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kanan">
-                    <img src="" alt="Logo Kanan" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kiri">
+                    <img src="" alt="Logo Kiri" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kiri">
+                    <img src="" alt="Logo Kanan" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kanan">
                 </div>
                 <div class="text-center mb-5 pt-4"><h1 class="text-xl font-bold mt-2">DOKUMEN BERITA ACARA UJI TERIMA (BAUT)</h1></div>
                 <div class="border-t border-black mb-[2px]"></div><div class="border-t border-black mb-6"></div>
@@ -493,7 +491,7 @@ function generateDynamicPreviewPages() {
                     <div class="flex mb-1"><div class="w-[170px]">PELAKSANA</div><div class="w-4 text-center">:</div><div class="flex-1 val-pelaksana">-</div></div>
                 </div>
             </div>
-            <div class="w-full flex justify-center mt-28 mb-16"><img src="" class="w-[450px] object-contain out-logo-kanan"></div>
+            <div class="w-full flex justify-center mt-28 mb-16"><img src="" class="w-[450px] object-contain out-logo-kiri"></div>
             <div class="w-full text-center text-[15px] md:text-[17px] font-bold space-y-7">
                 <p>ANTARA</p>
                 <p class="uppercase val-pihak1-perusahaan">-</p>
@@ -504,8 +502,8 @@ function generateDynamicPreviewPages() {
 
         <div id="preview-page-2" class="paper-a4 hidden page-break font-sans relative preview-page-kertas">
             <div class="relative flex justify-between items-start mb-16">
-                <img src="" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kanan">
-                <img src="" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kiri">
+                <img src="" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kiri">
+                <img src="" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kanan">
             </div>
             <div class="text-center mb-16 pt-4">
                 <h1 class="text-2xl font-bold leading-snug">DAFTAR ISI<br>DOKUMEN BERITA ACARA UJI TERIMA<br>(BAUT)</h1>
@@ -563,7 +561,6 @@ function generateDynamicPreviewPages() {
         </div>
     `);
 
-// FIX: Menghilangkan paraf kanan (Rian) di halaman ABD
     prevContainer.insertAdjacentHTML('beforeend', `
         <div id="preview-page-27" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
             ${tplHeader('BERITA ACARA AS BUILD DRAWING (ABD)')}
