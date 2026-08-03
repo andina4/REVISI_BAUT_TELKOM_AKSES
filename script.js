@@ -1,9 +1,9 @@
 // ============================================
-// INJEKSI CSS PRINT FIX, STICKY HEADER & SPLIT SCREEN
+// INJEKSI CSS PRINT FIX & STICKY HEADER
 // ============================================
-if (!document.getElementById('custom-style-v16')) {
+if (!document.getElementById('print-fix-style-v15')) {
     const style = document.createElement('style');
-    style.id = 'custom-style-v16';
+    style.id = 'print-fix-style-v15';
     style.innerHTML = `
         @page { size: A4 portrait; margin: 0; }
         @page landscape_page { size: A4 landscape; margin: 0; }
@@ -34,54 +34,6 @@ if (!document.getElementById('custom-style-v16')) {
                 page-break-after: always !important; page-break-inside: avoid !important; break-after: page !important;
                 overflow: hidden !important; border: none !important; box-shadow: none !important;
             }
-            .paper-a4-landscape img.max-h-full { max-height: 110mm !important; }
-            .paper-a4 img.max-h-full { max-height: 190mm !important; }
-        }
-
-        /* --- CSS KHUSUS MODE SPLIT SCREEN (70/30) --- */
-        body.split-active #main-scroller {
-            display: flex !important;
-            flex-direction: row !important;
-            padding: 0 !important;
-            overflow: hidden !important; /* Mencegah overflow gabungan */
-        }
-        body.split-active #form-tab {
-            display: block !important;
-            width: 30% !important;
-            min-width: 350px !important;
-            max-width: none !important;
-            margin: 0 !important;
-            height: 100vh !important;
-            overflow-y: auto !important;
-            border-radius: 0 !important;
-            border: none !important;
-            border-right: 4px solid #f87171 !important;
-            box-shadow: none !important;
-            padding: 1.5rem !important;
-        }
-        body.split-active #report-tab {
-            display: block !important;
-            width: 70% !important;
-            flex: 1 !important;
-            height: 100vh !important;
-            overflow-y: auto !important;
-            padding: 1.5rem !important;
-            background-color: #f3f4f6 !important;
-            margin: 0 !important;
-            padding-bottom: 50vh !important; /* Jarak aman di bawah scroll */
-        }
-        body.split-active #editor-tab {
-            display: none !important;
-        }
-        /* Custom Scrollbar Khusus Mode Split */
-        body.split-active #form-tab::-webkit-scrollbar, 
-        body.split-active #report-tab::-webkit-scrollbar {
-            width: 8px;
-        }
-        body.split-active #form-tab::-webkit-scrollbar-thumb,
-        body.split-active #report-tab::-webkit-scrollbar-thumb {
-            background: #fca5a5;
-            border-radius: 4px;
         }
     `;
     document.head.appendChild(style);
@@ -90,7 +42,7 @@ if (!document.getElementById('custom-style-v16')) {
 // ============================================
 // PENGATURAN LOGO & VARIABEL GLOBAL
 // ============================================
-// Path Logo sudah disesuaikan untuk struktur flat GitHub
+// FIX: Membalik default logo (Infra di Kiri, Telkom Akses di Kanan)
 const URL_LOGO_KIRI = 'infra.jpg'; 
 const URL_LOGO_KANAN = 'telkom.jpg'; 
 
@@ -139,74 +91,14 @@ function showCustomToast(message, isError = false) {
     setTimeout(() => { toast.classList.add('opacity-0', 'translate-x-full'); setTimeout(() => toast.remove(), 500); }, 4000);
 }
 
-// LOGIKA TOGGLE SPLIT SCREEN MODE
-function toggleSplitScreen() {
-    const body = document.body;
-    body.classList.toggle('split-active');
-    const splitBtn = document.getElementById('btn-split-screen');
-    
-    if (body.classList.contains('split-active')) {
-        // Tampilkan form dan preview bersamaan
-        document.getElementById('form-tab').classList.remove('hidden');
-        document.getElementById('report-tab').classList.remove('hidden');
-        document.getElementById('editor-tab').classList.add('hidden');
-        
-        // Matikan highlight dari tab biasa di sidebar
-        document.querySelectorAll('aside nav button').forEach(btn => {
-            if (btn.id !== 'btn-split-screen' && btn.id !== 'btn-reset-data') {
-                btn.classList.remove('bg-red-600', 'text-white', 'shadow');
-                btn.classList.add('bg-white', 'text-red-600');
-            }
-        });
-        
-        // Nyalakan highlight tombol split
-        if (splitBtn) {
-            splitBtn.classList.remove('bg-indigo-100', 'text-indigo-800');
-            splitBtn.classList.add('bg-indigo-700', 'text-white', 'shadow-inner');
-            splitBtn.innerHTML = "❌ Tutup Split Screen";
-        }
-        
-        switchPreview('all'); 
-        
-        // Reset posisi scroll
-        document.getElementById('form-tab').scrollTop = 0;
-        document.getElementById('report-tab').scrollTop = 0;
-        
-        showCustomToast("Mode Split Screen (70/30) Aktif!", false);
-    } else {
-        if (splitBtn) {
-            splitBtn.classList.remove('bg-indigo-700', 'text-white', 'shadow-inner');
-            splitBtn.classList.add('bg-indigo-100', 'text-indigo-800');
-            splitBtn.innerHTML = "🪟 Mode Split Screen";
-        }
-        switchTab('form-tab');
-        showCustomToast("Kembali ke Mode Normal", false);
-    }
-}
-
 function switchTab(tabId) {
-    // Matikan Split Mode jika sedang aktif saat pindah tab manual
-    const body = document.body;
-    if(body.classList.contains('split-active')) {
-        body.classList.remove('split-active');
-        const splitBtn = document.getElementById('btn-split-screen');
-        if(splitBtn) {
-            splitBtn.classList.remove('bg-indigo-700', 'text-white', 'shadow-inner');
-            splitBtn.classList.add('bg-indigo-100', 'text-indigo-800');
-            splitBtn.innerHTML = "🪟 Mode Split Screen";
-        }
-    }
-
     ['form-tab', 'editor-tab', 'report-tab'].forEach(id => document.getElementById(id).classList.add('hidden'));
     document.getElementById(tabId).classList.remove('hidden');
     
     document.querySelectorAll('aside nav button').forEach(btn => {
-        btn.classList.remove('bg-red-600', 'text-white', 'shadow'); 
-        if (btn.id !== 'btn-split-screen' && btn.id !== 'btn-reset-data') {
-            btn.classList.add('bg-white', 'text-red-600');
-        }
+        btn.classList.remove('bg-red-600', 'text-white', 'shadow'); btn.classList.add('bg-white', 'text-red-600');
     });
-    const activeBtn = Array.from(document.querySelectorAll('aside nav button')).find(btn => btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId));
+    const activeBtn = Array.from(document.querySelectorAll('aside nav button')).find(btn => btn.getAttribute('onclick').includes(tabId));
     if(activeBtn) {
         activeBtn.classList.add('bg-red-600', 'text-white', 'shadow'); activeBtn.classList.remove('bg-white', 'text-red-600');
     }
@@ -255,10 +147,7 @@ function switchForm(page) {
 function switchPreview(page) {
     try {
         page = page.toString();
-        // Container scroll disesuaikan berdasarkan Split Mode
-        const scroller = document.body.classList.contains('split-active') 
-            ? document.getElementById('report-tab') 
-            : document.getElementById('main-scroller');
+        const scroller = document.getElementById('main-scroller');
         if (!scroller) return;
 
         document.querySelectorAll('#preview-nav-container button').forEach(btn => {
@@ -314,11 +203,6 @@ function switchPreview(page) {
 function initScrollSpy() {
     if(window.previewObserver) window.previewObserver.disconnect();
     
-    // Scroll root disesuaikan dengan Mode (Normal vs Split)
-    const rootElement = document.body.classList.contains('split-active') 
-        ? document.getElementById('report-tab') 
-        : document.getElementById('main-scroller');
-
     window.previewObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -338,7 +222,7 @@ function initScrollSpy() {
             }
         });
     }, {
-        root: rootElement,
+        root: document.getElementById('main-scroller'),
         rootMargin: '-30% 0px -50% 0px', 
         threshold: 0
     });
@@ -400,6 +284,7 @@ function updateBottomNav(id) {
 // ============================================
 // TEMPLATE HTML UNTUK PREVIEW
 // ============================================
+// FIX: Logo Kiri selalu di kiri, Kanan selalu di kanan (Kiri = Infra, Kanan = Telkom)
 function tplHeader(title) {
     return `
     <div class="relative w-full h-8 mb-2 shrink-0">
@@ -1019,6 +904,7 @@ function buatHalamanBlank() {
     </div>`);
 
     const prevContainer = document.getElementById('dynamic-preview-container');
+    // FIX: Custom page paraf wrapper diganti kelas tailwind-nya, paraf Rian dihilangkan
     prevContainer.insertAdjacentHTML('beforeend', `
     <div id="preview-page-${pageId}" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
         <div class="relative w-full h-8 lg:h-10 mb-2 shrink-0"><img src="" class="h-6 lg:h-8 absolute left-0 top-0 object-contain out-logo-kiri"><img src="" class="h-6 lg:h-8 absolute right-0 top-0 object-contain out-logo-kanan"></div><div class="text-center w-full mb-2 shrink-0"><h1 class="text-[13px] md:text-sm font-bold leading-tight uppercase" id="out-custom-${pageId}-judul">BERITA ACARA CUSTOM</h1></div><div class="border-t-2 border-black mb-[2px] shrink-0"></div><div class="border-t border-black mb-2 shrink-0"></div>
@@ -1058,9 +944,7 @@ function buatHalamanBlank() {
                     <span id="txt-ttd-kanan-custom-${pageId}" class="text-[10px] text-gray-300 font-normal italic z-0">...ttd...</span>
                     <img id="out-custom-${pageId}-img-ttd2" class="absolute inset-0 w-full h-full object-contain hidden z-10" style="padding: 2px;">
                 </div>
-                <div class="relative inline-block">
-                    <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
-                </div>
+                <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
             </div>
         </div>
         
@@ -1466,18 +1350,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window[`${p.uploaderId}Uploader`] = new PhotoUploader(p.uploaderId, p.max, p.capId, defaults);
         defaults.forEach((cap, idx) => { const outCap = document.getElementById(`${p.capId}-cap-${idx+1}`); if(outCap) outCap.innerText = cap; });
     });
-
-    // TAMBAH TOMBOL SPLIT SCREEN DI SIDEBAR
-    const sidebarNav = document.querySelector('aside nav');
-    if (sidebarNav && !document.getElementById('btn-split-screen')) {
-        const splitBtn = document.createElement('button');
-        splitBtn.id = 'btn-split-screen';
-        splitBtn.type = 'button';
-        splitBtn.className = "w-full text-left px-4 py-3 mt-4 rounded bg-indigo-100 text-indigo-800 border border-indigo-300 font-bold hover:bg-indigo-200 transition shadow-sm";
-        splitBtn.innerHTML = "🪟 Mode Split Screen";
-        splitBtn.onclick = toggleSplitScreen;
-        sidebarNav.appendChild(splitBtn);
-    }
 
     // Jalankan pemuatan draf Editor Ekstra
     setTimeout(() => {
