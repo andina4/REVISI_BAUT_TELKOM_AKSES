@@ -284,11 +284,12 @@ function updateBottomNav(id) {
 // ============================================
 // TEMPLATE HTML UNTUK PREVIEW
 // ============================================
+// FIX: Membalik out-logo-kiri dan out-logo-kanan agar Telkom Akses di kanan dan TIF di kiri
 function tplHeader(title) {
     return `
     <div class="relative w-full h-8 mb-2 shrink-0">
-        <img src="" class="h-6 lg:h-8 absolute left-0 top-[-8px] object-contain out-logo-kiri">
-        <img src="" class="h-6 lg:h-8 absolute right-0 top-[-8px] object-contain out-logo-kanan">
+        <img src="" class="h-6 lg:h-8 absolute left-0 top-[-8px] object-contain out-logo-kanan">
+        <img src="" class="h-6 lg:h-8 absolute right-0 top-[-8px] object-contain out-logo-kiri">
     </div>
     <div class="text-center w-full mb-2 shrink-0">
         <h1 class="text-[13px] md:text-sm font-bold leading-tight uppercase">${title}</h1>
@@ -310,6 +311,7 @@ function tplInfo() {
     <div class="border-t-2 border-black mb-4"></div>`;
 }
 
+// FIX: Menghapus paraf kecil di bagian kanan (Pihak 2 / Rian)
 function tplTTD(marginClass = "mt-12") {
     return `
     <div class="w-full ${marginClass} flex justify-between px-8 text-center font-bold text-[11px] pb-4 shrink-0">
@@ -335,13 +337,14 @@ function tplTTD(marginClass = "mt-12") {
                 <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
                 <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
                 </div>
-            <p class="underline uppercase val-pihak2-nama">-</p>
-            <p>NIK. <span class="val-pihak2-nik">-</span></p>
+            <div class="relative inline-block">
+                <p class="underline uppercase val-pihak2-nama">-</p>
+                <p>NIK. <span class="val-pihak2-nik">-</span></p>
+            </div>
         </div>
     </div>`;
 }
 
-// FIX: Mengganti mt-auto dengan mt-8 mb-8 agar paraf terangkat ke atas dan tidak hilang di border kertas
 function tplParaf() {
     return `
     <div class="w-full mt-8 mb-8 flex justify-end pt-4 shrink-0">
@@ -450,7 +453,6 @@ function generateDynamicPreviewPages() {
         </div>`);
     }
 
-    // FIX: OTDR diganti logic pembatas gambarnya
     for(let i=22; i<=26; i++) {
         formContainer.insertAdjacentHTML('beforeend', `
         <div id="form-page-${i}" class="hidden form-page-content">
@@ -472,12 +474,13 @@ function generateDynamicPreviewPages() {
     }
 
     // PENTING: HALAMAN 1 SD 6 DIINJEK KE AWAL PREVIEW CONTAINER MENGGUNAKAN INSERTADJACENTHTML
+// FIX: Logo Kiri dan Kanan di cover juga dibalik posisinya sesuai request sebelumnya
     prevContainer.insertAdjacentHTML('afterbegin', `
         <div id="preview-page-1" class="paper-a4 text-[13px] font-sans relative preview-page-kertas">
             <div class="w-full">
                 <div class="relative flex justify-between items-start mb-6">
-                    <img src="" alt="Logo Kiri" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kiri">
-                    <img src="" alt="Logo Kanan" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kanan">
+                    <img src="" alt="Logo Kiri" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kanan">
+                    <img src="" alt="Logo Kanan" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kiri">
                 </div>
                 <div class="text-center mb-5 pt-4"><h1 class="text-xl font-bold mt-2">DOKUMEN BERITA ACARA UJI TERIMA (BAUT)</h1></div>
                 <div class="border-t border-black mb-[2px]"></div><div class="border-t border-black mb-6"></div>
@@ -501,8 +504,8 @@ function generateDynamicPreviewPages() {
 
         <div id="preview-page-2" class="paper-a4 hidden page-break font-sans relative preview-page-kertas">
             <div class="relative flex justify-between items-start mb-16">
-                <img src="" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kiri">
-                <img src="" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kanan">
+                <img src="" class="h-6 lg:h-7 absolute left-0 top-[-8px] object-contain out-logo-kanan">
+                <img src="" class="h-6 lg:h-7 absolute right-0 top-[-8px] object-contain out-logo-kiri">
             </div>
             <div class="text-center mb-16 pt-4">
                 <h1 class="text-2xl font-bold leading-snug">DAFTAR ISI<br>DOKUMEN BERITA ACARA UJI TERIMA<br>(BAUT)</h1>
@@ -560,7 +563,7 @@ function generateDynamicPreviewPages() {
         </div>
     `);
 
-    // FIX: KML dan MANCORE diganti pembatas gambarnya serta penambahan posisi Paraf khusus TTD
+// FIX: Menghilangkan paraf kanan (Rian) di halaman ABD
     prevContainer.insertAdjacentHTML('beforeend', `
         <div id="preview-page-27" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
             ${tplHeader('BERITA ACARA AS BUILD DRAWING (ABD)')}
@@ -593,8 +596,10 @@ function generateDynamicPreviewPages() {
                         <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
                         <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
                     </div>
-                    <p class="underline uppercase val-pihak2-nama">-</p>
-                    <p>NIK. <span class="val-pihak2-nik">-</span></p>
+                    <div class="relative inline-block">
+                        <p class="underline uppercase val-pihak2-nama">-</p>
+                        <p>NIK. <span class="val-pihak2-nik">-</span></p>
+                    </div>
                 </div>
             </div>
         </div>
