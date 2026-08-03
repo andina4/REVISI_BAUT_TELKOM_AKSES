@@ -321,8 +321,11 @@ function tplTTD(marginClass = "mt-12") {
                 <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kiri">...ttd...</span>
                 <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kiri" style="padding: 2px;">
             </div>
-            <p class="underline uppercase val-pihak1-nama">-</p>
-            <p>NIK. <span class="val-pihak1-nik">-</span></p>
+            <div class="relative inline-block">
+                <p class="underline uppercase val-pihak1-nama">-</p>
+                <p>NIK. <span class="val-pihak1-nik">-</span></p>
+                <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kiri">
+            </div>
         </div>
         <div class="w-[200px]">
             <p><span class="uppercase val-tempat-ttd">-</span>, <span class="uppercase val-tgl-ttd">-</span></p>
@@ -332,15 +335,19 @@ function tplTTD(marginClass = "mt-12") {
                 <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
                 <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
                 </div>
-            <p class="underline uppercase val-pihak2-nama">-</p>
-            <p>NIK. <span class="val-pihak2-nik">-</span></p>
+            <div class="relative inline-block">
+                <p class="underline uppercase val-pihak2-nama">-</p>
+                <p>NIK. <span class="val-pihak2-nik">-</span></p>
+                <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kanan">
+            </div>
         </div>
     </div>`;
 }
 
+// FIX: Mengganti mt-auto dengan mt-8 mb-8 agar paraf terangkat ke atas dan tidak hilang di border kertas
 function tplParaf() {
     return `
-    <div class="w-full mt-auto flex justify-end pt-4 shrink-0 pb-4">
+    <div class="w-full mt-8 mb-8 flex justify-end pt-4 shrink-0">
         <table class="border-collapse border border-black text-[10px] text-center font-bold bg-white" style="width: 150px;">
             <tr><td class="border border-black py-1 w-1/2">PARAF TIF</td><td class="border border-black py-1 w-1/2">PARAF TA</td></tr>
             <tr>
@@ -446,7 +453,7 @@ function generateDynamicPreviewPages() {
         </div>`);
     }
 
-    // OTDR
+    // FIX: OTDR diganti logic pembatas gambarnya
     for(let i=22; i<=26; i++) {
         formContainer.insertAdjacentHTML('beforeend', `
         <div id="form-page-${i}" class="hidden form-page-content">
@@ -462,7 +469,7 @@ function generateDynamicPreviewPages() {
         <div id="preview-page-${i}" class="paper-a4 hidden page-break text-[11px] font-sans flex flex-col relative preview-page-kertas">
             ${tplHeader('REPORT HASIL UKUR OTDR')}
             ${tplInfo()}
-            <div class="w-full flex-1 flex justify-center items-center overflow-hidden mb-6 min-h-0"><img id="out-otdr${i}-img-full" class="max-w-full max-h-full object-contain hidden"></div>
+            <div class="w-full flex justify-center items-center overflow-hidden mb-8 mt-4"><img id="out-otdr${i}-img-full" class="max-w-full max-h-[170mm] object-contain hidden"></div>
             ${tplParaf()}
         </div>`);
     }
@@ -556,7 +563,7 @@ function generateDynamicPreviewPages() {
         </div>
     `);
 
-    // ABD, KML, MANCORE
+    // FIX: KML dan MANCORE diganti pembatas gambarnya serta penambahan posisi Paraf khusus TTD
     prevContainer.insertAdjacentHTML('beforeend', `
         <div id="preview-page-27" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
             ${tplHeader('BERITA ACARA AS BUILD DRAWING (ABD)')}
@@ -575,8 +582,11 @@ function generateDynamicPreviewPages() {
                         <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kiri">...ttd...</span>
                         <img id="out-abd-img-ttd1" class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kiri" style="padding: 2px;">
                     </div>
-                    <p class="underline uppercase" id="out-abd-nama1">-</p>
-                    <p>NIK. <span id="out-abd-nik1">-</span></p>
+                    <div class="relative inline-block">
+                        <p class="underline uppercase" id="out-abd-nama1">-</p>
+                        <p>NIK. <span id="out-abd-nik1">-</span></p>
+                        <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kiri">
+                    </div>
                 </div>
                 <div class="w-[200px]">
                     <p><span class="uppercase val-tempat-ttd">-</span>, <span class="uppercase val-tgl-ttd">-</span></p>
@@ -586,8 +596,11 @@ function generateDynamicPreviewPages() {
                         <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
                         <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
                     </div>
-                    <p class="underline uppercase val-pihak2-nama">-</p>
-                    <p>NIK. <span class="val-pihak2-nik">-</span></p>
+                    <div class="relative inline-block">
+                        <p class="underline uppercase val-pihak2-nama">-</p>
+                        <p>NIK. <span class="val-pihak2-nik">-</span></p>
+                        <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kanan">
+                    </div>
                 </div>
             </div>
         </div>
@@ -595,14 +608,14 @@ function generateDynamicPreviewPages() {
         <div id="preview-page-28" class="paper-a4-landscape hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
             ${tplHeader('LAMPIRAN KML')}
             ${tplInfo()}
-            <div class="w-full flex-1 flex justify-center items-center overflow-hidden mb-4 min-h-0"><img id="out-kml-img-table" class="max-w-full max-h-full object-contain hidden"></div>
+            <div class="w-full flex justify-center items-center overflow-hidden mb-6 mt-4"><img id="out-kml-img-table" class="max-w-full max-h-[105mm] object-contain hidden"></div>
             ${tplParaf()}
         </div>
         
         <div id="preview-page-29" class="paper-a4-landscape hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
             ${tplHeader('LAMPIRAN MANCORE')}
             ${tplInfo()}
-            <div class="w-full flex-1 flex justify-center items-center overflow-hidden mb-4 min-h-0"><img id="out-mancore-img-table" class="max-w-full max-h-full object-contain hidden"></div>
+            <div class="w-full flex justify-center items-center overflow-hidden mb-6 mt-4"><img id="out-mancore-img-table" class="max-w-full max-h-[105mm] object-contain hidden"></div>
             ${tplParaf()}
         </div>
     `);
@@ -895,6 +908,7 @@ function buatHalamanBlank() {
     </div>`);
 
     const prevContainer = document.getElementById('dynamic-preview-container');
+    // FIX: Custom page paraf wrapper diganti kelas tailwind-nya
     prevContainer.insertAdjacentHTML('beforeend', `
     <div id="preview-page-${pageId}" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
         <div class="relative w-full h-8 lg:h-10 mb-2 shrink-0"><img src="" class="h-6 lg:h-8 absolute left-0 top-0 object-contain out-logo-kiri"><img src="" class="h-6 lg:h-8 absolute right-0 top-0 object-contain out-logo-kanan"></div><div class="text-center w-full mb-2 shrink-0"><h1 class="text-[13px] md:text-sm font-bold leading-tight uppercase" id="out-custom-${pageId}-judul">BERITA ACARA CUSTOM</h1></div><div class="border-t-2 border-black mb-[2px] shrink-0"></div><div class="border-t border-black mb-2 shrink-0"></div>
@@ -924,18 +938,24 @@ function buatHalamanBlank() {
                     <span id="txt-ttd-kiri-custom-${pageId}" class="text-[10px] text-gray-300 font-normal italic z-0">...ttd...</span>
                     <img id="out-custom-${pageId}-img-ttd1" class="absolute inset-0 w-full h-full object-contain hidden z-10" style="padding: 2px;">
                 </div>
-                <p class="underline uppercase" id="out-custom-${pageId}-nama1">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik1">123456</span></p>
+                <div class="relative inline-block">
+                    <p class="underline uppercase" id="out-custom-${pageId}-nama1">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik1">123456</span></p>
+                    <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kiri">
+                </div>
             </div>
             <div class="w-[200px]"><p><span class="uppercase val-tempat-ttd">-</span>, <span class="uppercase val-tgl-ttd">-</span></p><p class="uppercase mt-2" id="out-custom-${pageId}-perusahaan2">PT. TELKOM AKSES</p><p class="uppercase" id="out-custom-${pageId}-jabatan2">TIM UJI TERIMA</p>
                 <div class="h-16 my-2 relative flex justify-center items-center">
                     <span id="txt-ttd-kanan-custom-${pageId}" class="text-[10px] text-gray-300 font-normal italic z-0">...ttd...</span>
                     <img id="out-custom-${pageId}-img-ttd2" class="absolute inset-0 w-full h-full object-contain hidden z-10" style="padding: 2px;">
                 </div>
-                <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
+                <div class="relative inline-block">
+                    <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
+                    <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kanan">
+                </div>
             </div>
         </div>
         
-        <div id="preview-paraf-wrapper-${pageId}" class="w-full mt-auto flex justify-end pt-4 shrink-0 hidden pb-4">
+        <div id="preview-paraf-wrapper-${pageId}" class="w-full mt-8 mb-8 flex justify-end pt-4 shrink-0 hidden">
             <table class="border-collapse border border-black text-[10px] text-center font-bold bg-white" style="width: 150px;">
                 <tr><td class="border border-black py-1 w-1/2" id="out-custom-${pageId}-paraf-kiri">PARAF TIF</td><td class="border border-black py-1 w-1/2" id="out-custom-${pageId}-paraf-kanan">PARAF TA</td></tr>
                 <tr>
