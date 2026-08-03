@@ -335,11 +335,8 @@ function tplTTD(marginClass = "mt-12") {
                 <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
                 <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
                 </div>
-            <div class="relative inline-block">
-                <p class="underline uppercase val-pihak2-nama">-</p>
-                <p>NIK. <span class="val-pihak2-nik">-</span></p>
-                <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kanan">
-            </div>
+            <p class="underline uppercase val-pihak2-nama">-</p>
+            <p>NIK. <span class="val-pihak2-nik">-</span></p>
         </div>
     </div>`;
 }
@@ -596,11 +593,8 @@ function generateDynamicPreviewPages() {
                         <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
                         <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
                     </div>
-                    <div class="relative inline-block">
-                        <p class="underline uppercase val-pihak2-nama">-</p>
-                        <p>NIK. <span class="val-pihak2-nik">-</span></p>
-                        <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kanan">
-                    </div>
+                    <p class="underline uppercase val-pihak2-nama">-</p>
+                    <p>NIK. <span class="val-pihak2-nik">-</span></p>
                 </div>
             </div>
         </div>
@@ -908,7 +902,6 @@ function buatHalamanBlank() {
     </div>`);
 
     const prevContainer = document.getElementById('dynamic-preview-container');
-    // FIX: Custom page paraf wrapper diganti kelas tailwind-nya
     prevContainer.insertAdjacentHTML('beforeend', `
     <div id="preview-page-${pageId}" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
         <div class="relative w-full h-8 lg:h-10 mb-2 shrink-0"><img src="" class="h-6 lg:h-8 absolute left-0 top-0 object-contain out-logo-kiri"><img src="" class="h-6 lg:h-8 absolute right-0 top-0 object-contain out-logo-kanan"></div><div class="text-center w-full mb-2 shrink-0"><h1 class="text-[13px] md:text-sm font-bold leading-tight uppercase" id="out-custom-${pageId}-judul">BERITA ACARA CUSTOM</h1></div><div class="border-t-2 border-black mb-[2px] shrink-0"></div><div class="border-t border-black mb-2 shrink-0"></div>
@@ -948,10 +941,7 @@ function buatHalamanBlank() {
                     <span id="txt-ttd-kanan-custom-${pageId}" class="text-[10px] text-gray-300 font-normal italic z-0">...ttd...</span>
                     <img id="out-custom-${pageId}-img-ttd2" class="absolute inset-0 w-full h-full object-contain hidden z-10" style="padding: 2px;">
                 </div>
-                <div class="relative inline-block">
-                    <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
-                    <img class="absolute bottom-[-10px] right-[-40px] w-12 h-12 object-contain hidden z-20 img-paraf-kanan">
-                </div>
+                <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
             </div>
         </div>
         
