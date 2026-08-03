@@ -1,5 +1,5 @@
 // ============================================
-// INJEKSI CSS PRINT FIX & STICKY HEADER
+// INJEKSI CSS PRINT FIX, STICKY HEADER & SPLIT SCREEN
 // ============================================
 if (!document.getElementById('print-fix-style-v15')) {
     const style = document.createElement('style');
@@ -16,7 +16,7 @@ if (!document.getElementById('print-fix-style-v15')) {
                 overflow: visible !important; position: static !important; margin: 0 !important;
                 padding: 0 !important; background-color: white !important;
             }
-            .print-hide, aside, #form-tab, #editor-tab, #preview-header-wrapper, #toast-container, #login-screen, #custom-prompt-modal {
+            .print-hide, aside, #form-tab, #editor-tab, #preview-header-wrapper, #toast-container, #login-screen, #custom-prompt-modal, #print-validation-modal {
                 display: none !important;
             }
             .preview-page-kertas {
@@ -34,6 +34,56 @@ if (!document.getElementById('print-fix-style-v15')) {
                 page-break-after: always !important; page-break-inside: avoid !important; break-after: page !important;
                 overflow: hidden !important; border: none !important; box-shadow: none !important;
             }
+            .paper-a4-landscape img.max-h-full { max-height: 110mm !important; }
+            .paper-a4 img.max-h-full { max-height: 190mm !important; }
+        }
+
+        /* --- CSS KHUSUS MODE SPLIT SCREEN (40/60) --- */
+        body.split-active #main-scroller {
+            display: flex !important;
+            flex-direction: row !important;
+            padding: 0 !important;
+            overflow: hidden !important; 
+            align-items: flex-start !important;
+        }
+        body.split-active #form-tab {
+            display: block !important;
+            width: 40% !important; /* Input dibuat 40% */
+            min-width: 350px !important;
+            max-width: none !important;
+            margin: 0 !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
+            border-radius: 0 !important;
+            border: none !important;
+            border-right: 4px solid #f87171 !important;
+            box-shadow: none !important;
+            padding: 1.5rem !important;
+            background-color: white !important;
+        }
+        body.split-active #report-tab {
+            display: block !important;
+            width: 60% !important; /* Preview dibuat 60% */
+            flex: 1 !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
+            padding: 1.5rem !important;
+            background-color: #f3f4f6 !important;
+            margin: 0 !important;
+            padding-bottom: 50vh !important; 
+        }
+        body.split-active #editor-tab {
+            display: none !important;
+        }
+        /* Custom Scrollbar Khusus Mode Split */
+        body.split-active #form-tab::-webkit-scrollbar, 
+        body.split-active #report-tab::-webkit-scrollbar {
+            width: 8px;
+        }
+        body.split-active #form-tab::-webkit-scrollbar-thumb,
+        body.split-active #report-tab::-webkit-scrollbar-thumb {
+            background: #fca5a5;
+            border-radius: 4px;
         }
     `;
     document.head.appendChild(style);
@@ -42,7 +92,6 @@ if (!document.getElementById('print-fix-style-v15')) {
 // ============================================
 // PENGATURAN LOGO & VARIABEL GLOBAL
 // ============================================
-// FIX: Membalik default logo (Infra di Kiri, Telkom Akses di Kanan)
 const URL_LOGO_KIRI = 'infra.jpg'; 
 const URL_LOGO_KANAN = 'telkom.jpg'; 
 
@@ -76,6 +125,26 @@ for(let i=1; i<=29; i++) {
     window.pageConfigs[i.toString()] = { title: PAGE_TITLES[i], isDup: false };
 }
 
+// LOGIKA LOGIN DENGAN VALIDASI @GMAIL.COM
+function handleLogin() {
+    const user = document.getElementById('login-username').value.trim();
+    
+    if (!user) {
+        showCustomToast("Silakan masukkan email kamu terlebih dahulu!", true);
+        return;
+    }
+
+    if (!user.toLowerCase().endsWith('@gmail.com')) {
+        showCustomToast("Akses Ditolak! Harus menggunakan email @gmail.com", true);
+        return;
+    }
+
+    startApp();
+    setTimeout(() => {
+        showCustomToast("Welcome! " + user + " berhasil login.", false);
+    }, 500);
+}
+
 function startApp() {
     const splash = document.getElementById('login-screen');
     splash.classList.add('opacity-0');
@@ -91,14 +160,126 @@ function showCustomToast(message, isError = false) {
     setTimeout(() => { toast.classList.add('opacity-0', 'translate-x-full'); setTimeout(() => toast.remove(), 500); }, 4000);
 }
 
+// ============================================
+// LOGIKA SINKRONISASI TOMBOL NAVIGASI & SCROLL
+// ============================================
+function setActiveFormBtn(page) {
+    document.querySelectorAll('[id^="btn-form-"]').forEach(btn => {
+        btn.className = "flex-shrink-0 py-2 px-3 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm";
+    });
+    const activeBtn = document.getElementById('btn-form-' + page);
+    if (activeBtn) {
+        activeBtn.className = "flex-shrink-0 py-2 px-3 bg-red-600 text-white rounded shadow font-bold transition text-xs sm:text-sm";
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+}
+
+function setActivePrevBtn(page) {
+    document.querySelectorAll('#preview-nav-container button').forEach(btn => {
+        if(btn.id === 'btn-prev-all') {
+            btn.className = "flex-shrink-0 px-3 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm sticky left-0 z-10";
+        } else {
+            btn.className = "flex-shrink-0 px-3 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm";
+        }
+    });
+
+    if (page === 'all') {
+        const allBtn = document.getElementById('btn-prev-all');
+        if (allBtn) {
+            allBtn.className = "flex-shrink-0 px-3 py-2 bg-red-600 text-white rounded font-bold transition text-xs sm:text-sm shadow-md sticky left-0 z-10";
+        }
+        return;
+    }
+
+    const activeBtn = document.getElementById('btn-prev-' + page);
+    if (activeBtn) {
+        activeBtn.className = "flex-shrink-0 px-3 py-2 bg-red-600 text-white rounded shadow-md font-bold transition text-xs sm:text-sm";
+        if (document.body.classList.contains('split-active') || !document.getElementById('report-tab').classList.contains('hidden')) {
+            activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+}
+
+function scrollToPreviewPage(pageId) {
+    const scroller = document.body.classList.contains('split-active') ? document.getElementById('report-tab') : document.getElementById('main-scroller');
+    const target = document.getElementById('preview-page-' + pageId);
+    const header = document.getElementById('preview-header-wrapper');
+    
+    if(scroller && target) {
+        const offset = header ? header.offsetHeight : 0;
+        const targetPos = target.getBoundingClientRect().top + scroller.scrollTop - scroller.getBoundingClientRect().top - offset - 10;
+        scroller.scrollTo({ top: targetPos, behavior: 'smooth' });
+    }
+}
+
+// ============================================
+// LOGIKA TOGGLE SPLIT SCREEN MODE LENGKAP LIVE
+// ============================================
+function toggleSplitScreen() {
+    const body = document.body;
+    body.classList.toggle('split-active');
+    const splitBtn = document.getElementById('btn-split-screen');
+    
+    if (body.classList.contains('split-active')) {
+        document.getElementById('form-tab').classList.remove('hidden');
+        document.getElementById('report-tab').classList.remove('hidden');
+        document.getElementById('editor-tab').classList.add('hidden');
+        
+        document.querySelectorAll('aside nav button').forEach(btn => {
+            if (btn.id !== 'btn-split-screen' && btn.id !== 'btn-reset-data') {
+                btn.classList.remove('bg-red-600', 'text-white', 'shadow');
+                btn.classList.add('bg-white', 'text-red-600');
+            }
+        });
+        
+        if (splitBtn) {
+            splitBtn.classList.remove('bg-red-100', 'text-red-800', 'border-red-300');
+            splitBtn.classList.add('bg-red-800', 'text-white', 'shadow-inner', 'border-red-900');
+            splitBtn.innerHTML = "❌ Tutup Split Screen";
+        }
+        
+        const activeFormPage = document.querySelector('.form-page-content:not(.hidden)');
+        let currentPage = '1';
+        if (activeFormPage) {
+            currentPage = activeFormPage.id.replace('form-page-', '');
+        }
+
+        switchPreview(currentPage, true);
+        
+        showCustomToast("Mode Split Screen (40/60) Aktif! Sinkronisasi otomatis berjalan.", false);
+    } else {
+        if (splitBtn) {
+            splitBtn.classList.remove('bg-red-800', 'text-white', 'shadow-inner', 'border-red-900');
+            splitBtn.classList.add('bg-red-100', 'text-red-800', 'border-red-300');
+            splitBtn.innerHTML = "🪟 Mode Split Screen";
+        }
+        switchTab('form-tab');
+        showCustomToast("Kembali ke Mode Normal", false);
+    }
+}
+
 function switchTab(tabId) {
+    const body = document.body;
+    if(body.classList.contains('split-active')) {
+        body.classList.remove('split-active');
+        const splitBtn = document.getElementById('btn-split-screen');
+        if(splitBtn) {
+            splitBtn.classList.remove('bg-red-800', 'text-white', 'shadow-inner', 'border-red-900');
+            splitBtn.classList.add('bg-red-100', 'text-red-800', 'border-red-300');
+            splitBtn.innerHTML = "🪟 Mode Split Screen";
+        }
+    }
+
     ['form-tab', 'editor-tab', 'report-tab'].forEach(id => document.getElementById(id).classList.add('hidden'));
     document.getElementById(tabId).classList.remove('hidden');
     
     document.querySelectorAll('aside nav button').forEach(btn => {
-        btn.classList.remove('bg-red-600', 'text-white', 'shadow'); btn.classList.add('bg-white', 'text-red-600');
+        if (btn.id !== 'btn-split-screen' && btn.id !== 'btn-reset-data') {
+            btn.classList.remove('bg-red-600', 'text-white', 'shadow'); 
+            btn.classList.add('bg-white', 'text-red-600');
+        }
     });
-    const activeBtn = Array.from(document.querySelectorAll('aside nav button')).find(btn => btn.getAttribute('onclick').includes(tabId));
+    const activeBtn = Array.from(document.querySelectorAll('aside nav button')).find(btn => btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId));
     if(activeBtn) {
         activeBtn.classList.add('bg-red-600', 'text-white', 'shadow'); activeBtn.classList.remove('bg-white', 'text-red-600');
     }
@@ -106,17 +287,9 @@ function switchTab(tabId) {
     if(tabId === 'report-tab') {
         document.querySelectorAll('.preview-page-kertas').forEach(el => {
             el.classList.remove('hidden');
-            el.style.display = '';
+            el.style.display = 'block';
         });
-        
-        document.querySelectorAll('#preview-nav-container button').forEach(btn => {
-            if(btn.id === 'btn-prev-all') {
-                btn.className = "flex-shrink-0 px-3 py-2 bg-red-100 text-red-800 border border-red-400 rounded font-bold transition text-xs sm:text-sm shadow-md sticky left-0 z-10";
-            } else {
-                btn.className = "flex-shrink-0 px-3 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm";
-            }
-        });
-        
+        setActivePrevBtn('all');
         initScrollSpy();
         const scroller = document.getElementById('main-scroller');
         if(scroller) scroller.scrollTo({ top: 0, behavior: "instant" });
@@ -127,57 +300,43 @@ function switchForm(page) {
     try {
         page = page.toString();
         document.querySelectorAll('.form-page-content').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('[id^="btn-form-"]').forEach(btn => {
-            btn.className = "flex-shrink-0 py-2 px-3 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm";
-        });
-
+        
         const activePage = document.getElementById('form-page-' + page);
-        const activeBtn = document.getElementById('btn-form-' + page);
         if (activePage) activePage.classList.remove('hidden');
-        if (activeBtn) {
-            activeBtn.className = "flex-shrink-0 py-2 px-3 bg-red-600 text-white rounded shadow font-bold transition text-xs sm:text-sm";
-            activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
+        
+        setActiveFormBtn(page);
         updateBottomNav(page);
+
+        if (document.body.classList.contains('split-active')) {
+            switchPreview(page, true); 
+        }
     } catch(e) {
         console.error("Gagal berpindah tab form:", e);
     }
 }
 
-function switchPreview(page) {
+function switchPreview(page, fromForm = false) {
     try {
         page = page.toString();
-        const scroller = document.getElementById('main-scroller');
+        const isSplit = document.body.classList.contains('split-active');
+        const scroller = isSplit ? document.getElementById('report-tab') : document.getElementById('main-scroller');
         if (!scroller) return;
-
-        document.querySelectorAll('#preview-nav-container button').forEach(btn => {
-            if(btn.id === 'btn-prev-all') {
-                btn.className = "flex-shrink-0 px-3 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm sticky left-0 z-10";
-            } else {
-                btn.className = "flex-shrink-0 px-3 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm";
-            }
-        });
 
         const allPages = document.querySelectorAll('.preview-page-kertas');
 
         if(page === 'all') {
-            const allBtn = document.getElementById('btn-prev-all');
-            if(allBtn) allBtn.className = "flex-shrink-0 px-3 py-2 bg-red-100 text-red-800 border border-red-400 rounded font-bold transition text-xs sm:text-sm shadow-md sticky left-0 z-10";
-            
+            setActivePrevBtn('all');
             allPages.forEach(p => {
                 p.classList.remove('hidden');
                 p.style.display = 'block'; 
             });
-            
             scroller.scrollTo({ top: 0, behavior: "smooth" });
             setTimeout(() => { initScrollSpy(); }, 500);
             return;
         }
 
         if(window.previewObserver) window.previewObserver.disconnect();
-
         const targetPage = document.getElementById('preview-page-' + page);
-        const activeBtn = document.getElementById('btn-prev-' + page);
 
         if(targetPage) {
             allPages.forEach(p => {
@@ -188,13 +347,18 @@ function switchPreview(page) {
             targetPage.classList.remove('hidden');
             targetPage.style.display = 'block'; 
             
-            if (activeBtn) {
-                activeBtn.className = "flex-shrink-0 px-3 py-2 bg-red-600 text-white rounded shadow-md font-bold transition text-xs sm:text-sm";
-                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
-            
+            setActivePrevBtn(page);
             scroller.scrollTo({ top: 0, behavior: "instant" });
         }
+
+        if (isSplit && !fromForm) {
+            document.querySelectorAll('.form-page-content').forEach(el => el.classList.add('hidden'));
+            const activeForm = document.getElementById('form-page-' + page);
+            if (activeForm) activeForm.classList.remove('hidden');
+            setActiveFormBtn(page);
+            updateBottomNav(page);
+        }
+
     } catch(e) {
         console.error("Gagal melakukan navigasi preview:", e);
     }
@@ -203,27 +367,20 @@ function switchPreview(page) {
 function initScrollSpy() {
     if(window.previewObserver) window.previewObserver.disconnect();
     
+    const rootElement = document.body.classList.contains('split-active') 
+        ? document.getElementById('report-tab') 
+        : document.getElementById('main-scroller');
+
     window.previewObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const pageId = entry.target.id.replace('preview-page-', '');
-                document.querySelectorAll('#preview-nav-container button').forEach(btn => {
-                    if(btn.id === 'btn-prev-all') {
-                        btn.className = "flex-shrink-0 px-3 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm sticky left-0 z-10";
-                    } else {
-                        btn.className = "flex-shrink-0 px-3 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded font-bold transition text-xs sm:text-sm shadow-sm";
-                    }
-                });
-                const activeBtn = document.getElementById('btn-prev-' + pageId);
-                if (activeBtn) {
-                    activeBtn.className = "flex-shrink-0 px-3 py-2 bg-red-600 text-white rounded shadow font-bold transition text-xs sm:text-sm";
-                    activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
+                setActivePrevBtn(pageId);
             }
         });
     }, {
-        root: document.getElementById('main-scroller'),
-        rootMargin: '-30% 0px -50% 0px', 
+        root: rootElement,
+        rootMargin: '-20% 0px -60% 0px', 
         threshold: 0
     });
 
@@ -284,7 +441,6 @@ function updateBottomNav(id) {
 // ============================================
 // TEMPLATE HTML UNTUK PREVIEW
 // ============================================
-// FIX: Logo Kiri selalu di kiri, Kanan selalu di kanan (Kiri = Infra, Kanan = Telkom)
 function tplHeader(title) {
     return `
     <div class="relative w-full h-8 mb-2 shrink-0">
@@ -591,11 +747,11 @@ function generateDynamicPreviewPages() {
                     <p class="uppercase val-pihak2-jabatan">-</p>
                     <div class="h-16 my-2 relative flex justify-center items-center">
                         <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
-                        <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
+                        <img id="out-abd-img-ttd2" class="absolute inset-0 w-full h-full object-contain hidden z-10" style="padding: 2px;">
                     </div>
                     <div class="relative inline-block">
-                        <p class="underline uppercase val-pihak2-nama">-</p>
-                        <p>NIK. <span class="val-pihak2-nik">-</span></p>
+                        <p class="underline uppercase" id="out-abd-nama2">-</p>
+                        <p>NIK. <span id="out-abd-nik2">-</span></p>
                     </div>
                 </div>
             </div>
@@ -904,7 +1060,6 @@ function buatHalamanBlank() {
     </div>`);
 
     const prevContainer = document.getElementById('dynamic-preview-container');
-    // FIX: Custom page paraf wrapper diganti kelas tailwind-nya, paraf Rian dihilangkan
     prevContainer.insertAdjacentHTML('beforeend', `
     <div id="preview-page-${pageId}" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
         <div class="relative w-full h-8 lg:h-10 mb-2 shrink-0"><img src="" class="h-6 lg:h-8 absolute left-0 top-0 object-contain out-logo-kiri"><img src="" class="h-6 lg:h-8 absolute right-0 top-0 object-contain out-logo-kanan"></div><div class="text-center w-full mb-2 shrink-0"><h1 class="text-[13px] md:text-sm font-bold leading-tight uppercase" id="out-custom-${pageId}-judul">BERITA ACARA CUSTOM</h1></div><div class="border-t-2 border-black mb-[2px] shrink-0"></div><div class="border-t border-black mb-2 shrink-0"></div>
@@ -944,7 +1099,9 @@ function buatHalamanBlank() {
                     <span id="txt-ttd-kanan-custom-${pageId}" class="text-[10px] text-gray-300 font-normal italic z-0">...ttd...</span>
                     <img id="out-custom-${pageId}-img-ttd2" class="absolute inset-0 w-full h-full object-contain hidden z-10" style="padding: 2px;">
                 </div>
-                <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
+                <div class="relative inline-block">
+                    <p class="underline uppercase" id="out-custom-${pageId}-nama2">NAMA</p><p>NIK. <span id="out-custom-${pageId}-nik2">654321</span></p>
+                </div>
             </div>
         </div>
         
@@ -1351,6 +1508,18 @@ document.addEventListener('DOMContentLoaded', () => {
         defaults.forEach((cap, idx) => { const outCap = document.getElementById(`${p.capId}-cap-${idx+1}`); if(outCap) outCap.innerText = cap; });
     });
 
+    // TAMBAH TOMBOL SPLIT SCREEN DI SIDEBAR SECARA OTOMATIS
+    const sidebarNav = document.querySelector('aside nav');
+    if (sidebarNav && !document.getElementById('btn-split-screen')) {
+        const splitBtn = document.createElement('button');
+        splitBtn.id = 'btn-split-screen';
+        splitBtn.type = 'button';
+        splitBtn.className = "w-full text-left px-4 py-3 mt-4 rounded bg-red-100 text-red-800 border border-red-300 font-bold hover:bg-red-200 transition shadow-sm";
+        splitBtn.innerHTML = "🪟 Mode Split Screen";
+        splitBtn.onclick = toggleSplitScreen;
+        sidebarNav.appendChild(splitBtn);
+    }
+
     // Jalankan pemuatan draf Editor Ekstra
     setTimeout(() => {
         const savedEditor = localStorage.getItem('bautPro_editor_ekstra');
@@ -1361,7 +1530,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 600);
 });
 
+// ============================================
+// LOGIKA CETAK PDF & VALIDASI (NEW)
+// ============================================
+
 function cetakPDF() {
+    validateBeforePrint();
+}
+
+function executePrint() {
+    // Sembunyikan modal validasi
+    const modal = document.getElementById('print-validation-modal');
+    if (modal) modal.classList.add('hidden');
+    
+    // Matikan Split Screen sebelum cetak agar tidak pecah/error
+    if (document.body.classList.contains('split-active')) {
+        toggleSplitScreen();
+    }
+    
     switchTab('report-tab');
     document.querySelectorAll('[id^="preview-page-"]').forEach(pageEl => {
         pageEl.classList.remove('hidden');
@@ -1373,13 +1559,107 @@ function cetakPDF() {
     setTimeout(() => { window.print(); }, 1000);
 }
 
+function validateBeforePrint() {
+    let validationHTML = '';
+    let allValid = true;
+
+    window.pageOrder.forEach((id, index) => {
+        let config = window.pageConfigs[id];
+        let pageTitle = config.isDup ? `Hal ${index + 1} (Dup)` : `Hal ${index + 1} (${config.title})`;
+        let formEl = document.getElementById('form-page-' + id);
+        
+        if (formEl) {
+            let isLengkap = true;
+            
+            // 1. Cek semua input text, date, textarea (abaikan file & tombol)
+            let inputs = formEl.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="file"]), textarea');
+            inputs.forEach(inp => {
+                if (inp.value.trim() === '') isLengkap = false;
+            });
+
+            // 2. Cek semua input file & grid uploader
+            let fileInputs = formEl.querySelectorAll('input[type="file"]');
+            fileInputs.forEach(fInp => {
+                // Jika input ini adalah untuk Grid Eviden/Custom
+                if (fInp.id && (fInp.id.startsWith('file-ev') || fInp.id.startsWith('file-custom'))) {
+                    let uploaderName = fInp.id.replace('file-', '') + 'Uploader';
+                    if (window[uploaderName]) {
+                        // Cek apakah minimal ada 1 foto yang diupload di grid ini
+                        let hasPhoto = window[uploaderName].photos.some(p => p !== null);
+                        if (!hasPhoto) isLengkap = false;
+                    }
+                } else {
+                    // Jika input file biasa (Logo, TTD tunggal, Gambar Tabel)
+                    if (fInp.files.length === 0) {
+                        let targetId = fInp.getAttribute('data-target');
+                        if (targetId) {
+                            let imgEl = document.getElementById(targetId);
+                            // Jika belum ada file dan gambarnya tidak ada src-nya (kosong)
+                            if (!imgEl || !imgEl.getAttribute('src') || imgEl.getAttribute('src') === '') {
+                                isLengkap = false;
+                            }
+                        } else {
+                            // Backup jika elemen tidak punya data-target
+                            isLengkap = false;
+                        }
+                    }
+                }
+            });
+
+            // Masukkan hasil validasi halaman ini ke daftar UI
+            if (isLengkap) {
+                validationHTML += `<li class="text-green-700 font-bold text-[13px] mb-2 flex justify-between items-center border-b border-gray-200 pb-1"><span>${pageTitle}</span> <span class="bg-green-100 px-2 py-0.5 rounded text-green-800">✅ Lengkap</span></li>`;
+            } else {
+                validationHTML += `<li class="text-red-600 font-bold text-[13px] mb-2 flex justify-between items-center border-b border-gray-200 pb-1"><span>${pageTitle}</span> <span class="bg-red-100 px-2 py-0.5 rounded text-red-800">❌ Belum Lengkap</span></li>`;
+                allValid = false;
+            }
+        }
+    });
+
+    // Ciptakan dan Tampilkan Modal
+    let modal = document.getElementById('print-validation-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'print-validation-modal';
+        modal.className = 'fixed inset-0 z-[100] bg-black bg-opacity-60 flex items-center justify-center transition-opacity print-hide';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div class="bg-white rounded-xl shadow-2xl w-11/12 max-w-md overflow-hidden border border-red-200 flex flex-col max-h-[85vh]">
+            <div class="bg-red-700 px-5 py-4 flex justify-between items-center shrink-0">
+                <h3 class="text-white font-extrabold text-lg flex items-center gap-2">📄 Status Pengisian Form</h3>
+                <button type="button" onclick="document.getElementById('print-validation-modal').classList.add('hidden')" class="text-red-200 hover:text-white transition font-bold text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 bg-red-50">
+                <p class="text-sm text-red-900 font-medium mb-4 text-center">
+                    ${allValid ? '🎉 Keren! Semua halaman sudah terisi lengkap.' : '⚠️ Perhatian! Ada halaman yang kolom/fotonya belum diisi penuh:'}
+                </p>
+                <ul class="bg-white p-4 rounded-lg border border-red-100 shadow-inner">
+                    ${validationHTML}
+                </ul>
+            </div>
+            <div class="bg-white px-5 py-4 border-t border-red-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="document.getElementById('print-validation-modal').classList.add('hidden')" class="px-4 py-2 bg-white border border-red-300 text-red-700 rounded-lg font-bold hover:bg-red-50 transition shadow-sm">
+                    Batal Cetak
+                </button>
+                <button type="button" onclick="executePrint()" class="px-6 py-2 ${allValid ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'} text-white rounded-lg font-bold transition shadow-md">
+                    ${allValid ? 'Cetak PDF Sekarang' : 'Tetap Cetak PDF'}
+                </button>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+
 // ============================================
-// FITUR AUTO-SAVE (LOCAL STORAGE)
+// FITUR 100% LIVE SYNC & AUTO-SAVE (Event Delegation)
 // ============================================
 function initAutoSave() {
-    const inputs = document.querySelectorAll('input:not([type="file"]), textarea, select');
-    
     // 1. Muat data yang tersimpan saat aplikasi dibuka
+    const inputs = document.querySelectorAll('input:not([type="file"]), textarea, select');
     inputs.forEach(el => {
         if (el.id) {
             const savedValue = localStorage.getItem('bautPro_' + el.id);
@@ -1389,18 +1669,25 @@ function initAutoSave() {
         }
     });
 
-    // 2. Simpan data secara otomatis setiap kali ada ketikan/perubahan
-    inputs.forEach(el => {
-        el.addEventListener('input', () => {
-            if (el.id) {
-                localStorage.setItem('bautPro_' + el.id, el.value);
+    // 2. Global Event Listener untuk memastikan SEMUA ketikan 100% Live (termasuk halaman baru)
+    document.addEventListener('input', (e) => {
+        if(e.target.matches('input:not([type="file"]), textarea, select')) {
+            // Save ke LocalStorage
+            if (e.target.id) {
+                localStorage.setItem('bautPro_' + e.target.id, e.target.value);
             }
-        });
-        el.addEventListener('change', () => {
-            if (el.id) {
-                localStorage.setItem('bautPro_' + el.id, el.value);
+            // Trigger Live Update ke Preview
+            updateReport();
+        }
+    });
+    
+    document.addEventListener('change', (e) => {
+        if(e.target.matches('input:not([type="file"]), textarea, select')) {
+            if (e.target.id) {
+                localStorage.setItem('bautPro_' + e.target.id, e.target.value);
             }
-        });
+            updateReport();
+        }
     });
 
     // 3. Tambahkan tombol Reset Data di Sidebar
