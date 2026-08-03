@@ -67,6 +67,14 @@
         display: none !important;
     }
 
+    /* FIX: Mencegah gambar mekar saat dicetak PDF agar paraf tidak terdorong keluar kertas */
+    .paper-a4-landscape img.max-h-full {
+        max-height: 110mm !important;
+    }
+    .paper-a4 img.max-h-full {
+        max-height: 190mm !important;
+    }
+
     /* Kertas Portrait (Otomatis dibaca Portrait oleh Browser) */
     .paper-a4 {
         width: 210mm !important;
