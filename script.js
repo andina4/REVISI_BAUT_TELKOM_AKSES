@@ -331,7 +331,7 @@ function tplTTD(marginClass = "mt-12") {
             <div class="h-16 my-2 relative flex justify-center items-center">
                 <span class="text-[10px] text-gray-300 font-normal italic z-0 txt-ttd-kanan">...ttd...</span>
                 <img class="absolute inset-0 w-full h-full object-contain hidden z-10 img-ttd-kanan" style="padding: 2px;">
-            </div>
+                </div>
             <p class="underline uppercase val-pihak2-nama">-</p>
             <p>NIK. <span class="val-pihak2-nik">-</span></p>
         </div>
@@ -542,7 +542,7 @@ function generateDynamicPreviewPages() {
         </div>
 
         <div id="preview-page-6" class="paper-a4 hidden page-break text-[12px] font-sans flex flex-col relative preview-page-kertas">
-            ${tplHeader('LAMPIRAN EVIDENT HASIL UKUR OPM')}
+            ${tplHeader('LAMPIRAN EVIDENT UJI TERIMA')}
             ${tplInfo()}
             <div class="grid grid-cols-3 gap-0 border-t border-l border-black w-full mb-4 flex-none">
                 ${Array(9).fill(0).map((_, gridIdx) => `
@@ -837,7 +837,7 @@ function buatHalamanBlank() {
                     <option value="landscape">🗎 Landscape</option>
                 </select>
                 <button type="button" onclick="hapusHalaman('${pageId}')" class="btn-hapus bg-red-600 text-white text-[10px] sm:text-xs px-2 py-1 rounded shadow hover:bg-red-700 transition ml-1">🗑️ Hapus</button>
-            </div>
+                </div>
         </h3>
         <div class="bg-red-50 p-4 rounded border border-red-100 mb-4">
             <label class="block font-bold text-sm text-red-900 mb-1">Judul Halaman (Header Tengah)</label>
